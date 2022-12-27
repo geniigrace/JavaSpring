@@ -34,3 +34,5 @@ build/
 
 
 *.jar
+*.zip
+*.cmd
