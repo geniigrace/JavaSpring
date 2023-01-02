@@ -66,6 +66,18 @@
 			<artifactId>spring-boot-devtools</artifactId>
 		</dependency>
 
+		<!--레이아웃을 위해 추가-->
+		<dependency>
+			<groupId>nz.net.ultraq.thymeleaf</groupId>
+			<artifactId>thymeleaf-layout-dialect</artifactId>
+		</dependency>
+
+		<!--시큐리티 추가 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+
+		</dependency>
 
 	</dependencies>
 
