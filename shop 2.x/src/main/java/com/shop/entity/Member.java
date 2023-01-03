@@ -30,6 +30,8 @@ public class Member {
 
     private String address;
 
+    private String telnumber;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -40,6 +42,7 @@ public class Member {
         member.setName(memberFormDto.getName());
         member.setEmail(memberFormDto.getEmail());
         member.setAddress(memberFormDto.getAddress());
+        member.setTelnumber(memberFormDto.getTelnumber());
 
         String password = passwordEncoder.encode(memberFormDto.getPassword());
         member.setPassword(password);

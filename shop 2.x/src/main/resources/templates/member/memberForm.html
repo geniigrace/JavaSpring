@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/layout1}">
+      layout:decorate="~{layout/layout1}">
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
   <style>
@@ -12,6 +12,7 @@
 </th:block>
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+  <!--.ready : 화면이 시작되면 가장먼저 로딩 -->
   <script th:inline="javascript">
     $(document).ready(function(){
       var errorMessage = [[${errorMessage}]];
@@ -23,30 +24,46 @@
 </th:block>
 
 <div layout:fragment="content">
+  <!--method : post 이므로 대용량의 데이터이며 Post mapping 이 필요함(members/new로 연결될)-->
+  <!--object : memberFormDto는 컨트롤러의 model.attribute  -->
   <form action="/members/new" role="form" method="post" th:object="${memberFormDto}">
     <div class="form-group">
       <label th:for="name">이름</label>
+      <!--*{name} : 입력받은 name 부분이 Dto에 치환되어 대치됨 -->
       <input type="text" th:field="*{name}" class="form-control" placeholder="이름을 입력해주세요.">
       <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError">Incorrect date</p>
     </div>
+
     <div class="form-group">
       <label th:for="email">이메일 주소</label>
       <input type="text" th:field="*{email}" class="form-control" placeholder="이메일을 입력해주세요.">
       <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="fieldError">Incorrect date</p>
     </div>
+
     <div class="form-group">
       <label th:for="password">비밀번호</label>
       <input type="password" th:field="*{password}" class="form-control" placeholder="비밀번호 입력">
       <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="fieldError">Incorrect date</p>
     </div>
+
     <div class="form-group">
       <label th:for="address">주소</label>
       <input type="text" th:field="*{address}" class="form-control" placeholder="주소를 입력해주세요.">
       <p th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="fieldError">Incorrect date</p>
     </div>
+
+    <div class="form-group">
+      <label th:for="telnumber">전화번호</label>
+      <input type="text" th:field="*{telnumber}" class="form-control" placeholder="전화번호를 입력해주세요.">
+      <p th:if="${#fields.hasErrors('telnumber')}" th:errors="*{telnumber}" class="fieldError">Incorrect date</p>
+    </div>
+
     <div style="text-align: center">
+      <!--유일한 액션이므로 버튼을 눌러서 액션이 발생하면 Post Mapping 된 쪽으로 넘어감  -->
       <button type="submit" class="btn btn-primary" style="">Submit</button>
     </div>
+    <!--웹 해킹을 막는 토큰 -->
+    <!--type = hidden : 사용자에게 보여지지 않도록 숨겨둠 -->
     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
   </form>
 </div>
