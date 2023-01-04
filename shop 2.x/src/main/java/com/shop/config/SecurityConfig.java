@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,6 +32,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { //상속받�
                 .logoutRequestMatcher(new AntPathRequestMatcher("/members/logout"))
                 .logoutSuccessUrl("/");
 
+
+        http.authorizeRequests()//인증요청이 왔는데
+
+                .mvcMatchers("/","/members/**","/item/**","/images/**").permitAll() //해당경로는 모든 경우
+                .mvcMatchers("/admin/**").hasRole("ADMIN") //admin 경로는 권한이 admin인 경우
+                .anyRequest().authenticated();
+
+        http.exceptionHandling() //예외 핸들링은 만들어놓은 CAEP를 통해 함
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+
     }
 
     @Bean //원두: 빈객체 -> SpringContainer에 들어감 -> 이 객체를 하나로 돌려씀:싱글턴
@@ -42,4 +53,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { //상속받�
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{
         auth.userDetailsService(memberService).passwordEncoder(passwordEncoder());
     }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception{
+
+        web.ignoring().antMatchers("/css/**","/js/**","/img/**"); //이 경로에 있는 것들은 시큐리티에서 제외
+    }
+
 }
