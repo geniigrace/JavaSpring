@@ -42,7 +42,7 @@ public class Item {
 
     private  LocalDateTime updateTime; // 수정시간
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name="member_item",
             joinColumns = @JoinColumn(name="member_id"),

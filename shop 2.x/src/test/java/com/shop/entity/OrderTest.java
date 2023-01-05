@@ -3,6 +3,7 @@ package com.shop.entity;
 import com.shop.constant.ItemSellStatus;
 import com.shop.repository.ItemRepository;
 import com.shop.repository.MemberRepository;
+import com.shop.repository.OrderItemRepository;
 import com.shop.repository.OrderRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,9 @@ class OrderTest {
 
     @PersistenceContext
     EntityManager em;
+
+    @Autowired
+    OrderItemRepository orderItemRepository;
 
     public Item createItem(){
         Item item = new Item();
@@ -107,5 +111,23 @@ class OrderTest {
         em.flush();
     }
 
+    @Test
+    @DisplayName("지연 로딩 테스트")
+    public void lazeLoadingTest(){
+        Order order = this.createOrder();
+        Long orderItemId=order.getOrderItems().get(0).getId();
+        em.flush();
+        em.clear();
+
+        OrderItem orderItem = orderItemRepository.findById(orderItemId)
+                .orElseThrow(EntityNotFoundException::new);
+
+        System.out.println("Order class : "+orderItem.getOrder().getClass()); //order item 에 있는 order에 class 가져옴
+        System.out.println("======================================");
+        orderItem.getOrder().getOrderDate(); // order item에 있는 order에 orderdate 가져옴
+        System.out.println("======================================");
+
+
+    }
 
 }
