@@ -98,6 +98,14 @@
 			<artifactId>thymeleaf-extras-springsecurity5</artifactId>
 		</dependency>
 
+		<!--DTO 와 Entity를 연결해주기 위한 라이브러리 -->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>2.3.9</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
