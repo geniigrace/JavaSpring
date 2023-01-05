@@ -47,7 +47,7 @@
     </div>
 
     <div class="form-group">
-      <label th:for="address">주소</label>
+      <label th:for="addr">주소</label>
       <input type="text" th:field="*{address}" class="form-control" placeholder="주소를 입력해주세요.">
       <p th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="fieldError">Incorrect date</p>
     </div>
