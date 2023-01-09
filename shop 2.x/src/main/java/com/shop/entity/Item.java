@@ -2,6 +2,7 @@ package com.shop.entity;
 
 import com.shop.constant.ItemSellStatus;
 
+import com.shop.dto.ItemFormDto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,7 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class Item {
+public class Item extends BaseEntity{
     @Id //기본키
     @Column(name="item_id")
     @GeneratedValue(strategy = GenerationType.AUTO) // 자동을 1씩 증가
@@ -49,4 +50,14 @@ public class Item {
             inverseJoinColumns = @JoinColumn(name="item_id")
     )
     private List<Member> member;
+
+    //상품 파일수정을 위한 추가/../
+    public void updateItem(ItemFormDto itemFormDto){
+        this.itemNm = itemFormDto.getItemNm();
+        this.price = itemFormDto.getPrice();
+        this.stockNumber = itemFormDto.getStockNumber();
+        this.itemDetail = itemFormDto.getItemDetail();
+        this.itemSellStatus = itemFormDto.getItemSellStatus();
+    }
+
 }
