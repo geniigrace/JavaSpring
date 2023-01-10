@@ -111,7 +111,9 @@ public class ItemController {
     @GetMapping(value = {"/admin/items", "/admin/items/{page}"} )
     public String itemManage(ItemSearchDto itemSearchDto, @PathVariable("page") Optional<Integer> page, Model model){
 
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
+        //pageable : 페이지로 데이터를 받기 위해 선언
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5); //page.isPresent() : 페이지 있는지 확인
+
         Page<Item> items = itemService.getAdminItemPage(itemSearchDto, pageable);
 
         model.addAttribute("items", items);

@@ -23,6 +23,7 @@
         "&searchSellStatus=" + searchSellStatus +
         "&searchBy=" + searchBy +
         "&searchQuery=" + searchQuery;
+        }
   </script>
 </th:block>
 
@@ -47,6 +48,7 @@
       </thead>
 
       <tbody>
+      <!--each : 반복문 돌면서 결과물 화면에 표현-->
       <tr th:each="item, status : ${items.getContent()}">
         <td th:text="${item.id}"></td>
         <td><a th:href="'/admin/item/'+${item.id}" th:text="${item.itemNm}"></a></td>
@@ -57,19 +59,24 @@
       </tbody>
     </table>
 
+    <!--페이지수, 게시글 수를 계산하기 위함-->
     <div th:with="start=${(items.number/maxPage)*maxPage +1}, end=(${(items.totalPages == 0) ? 1:(start+(maxPage-1) < items.totalPages ? start + (maxPage -1) : items.totalPages)})">
+
       <ul class="pagination justify-content-center">
-        <li class="page-item" th:classappend="${items.first}?'disabled'">
-          <a th:onclick="'javascript:page('+${items.number-1}+')'" aria-label='Previous' class="page-link">
-            <span aria-hidden="true">Previous</span>
+        <li class="page-item" th:classappend="${items.first}?'disabled'"> <!--첫번째 아이템이면 pre 안띄움 -->
+          <a th:onclick="'javascript:page('+${items.number - 1} + ')'" aria-label='Previous' class="page-link">
+            <span aria-hidden="true">Pre</span>
           </a>
         </li>
-
-        <li class="page-item" th:each="page : ${#numbers.sequence(start,end)}" th:classappend="${items.number eq page-1}?'active':''">
-          <a th:onclick="'javascript:page('+${page -1}+')'" th:inline="text" class="page-link">[[${page}]]</a>
+        <!--페이지 번호-->
+        <li class="page-item" th:each="page: ${#numbers.sequence(start,end)}" th:classappend="${items.number eq page-1}?'active':''">
+          <!--page의 next 와 pre 는 1,2,... 으로 시작되지만 페이지 index는 0부터 시작하므로 page-1 해서 지정함 -->
+          <a th:onclick="'javascript:page('+${page -1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
         </li>
+
+
         <li class="page-item" th:classappend="${items.last}?'disabled'">
-          <a th:onclick="'javascript:page('+${items.number +1}+')'" aria-label="Next" class="page-link">
+          <a th:onclick="'javascript:page(' + ${items.number + 1} + ')'" aria-label="Next" class="page-link">
             <span aria-hidden="true">Next</span>
           </a>
         </li>
