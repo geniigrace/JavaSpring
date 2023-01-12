@@ -96,16 +96,19 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
         //QMainItemDto @QueryProjection 을 하면 DTO로 바로 조회 가능
         QueryResults<MainItemDto> results
                 = queryFactory.select(new QMainItemDto(item.id, item.itemNm, item.itemDetail, itemImg.imgUrl, item.price))
-                // 내부조인 .repImgYn.eq("Y") 대표이미지만 가져온다
+                // 내부조인 : item과 itemImg를 같은 걸로 묶어줌 .repImgYn.eq("Y") 대표이미지만 가져온다
                 .from(itemImg).join(itemImg.item, item).where(itemImg.repImgYn.eq("Y"))
+                //검색어 있으면 검색어 포함한걸로
                 .where(itemNmLike(itemSearchDto.getSearchQuery()))
                 .orderBy(item.id.desc())
                 .offset(pageable.getOffset())
+                //토탈페이지수와 결과가 나와서 result에 담김
                 .limit(pageable.getPageSize()).fetchResults();
 
         List<MainItemDto> content = results.getResults();
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);
+        //getMainItemPage를 콜하면 검색결과와, 페이지와, 토탈페이지수 반환됨
     }
 }
