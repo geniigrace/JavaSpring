@@ -21,13 +21,18 @@ public class MainController {
 
     @GetMapping(value = "/")
     public String main(ItemSearchDto itemSearchDto, Optional<Integer> page, Model model ){
+        //ItemSearchDto : 쿼리관련 //Optinal<Integer> page : 페이지관련 //Model : html 화면으로 올릴 모델
 
+        //페이지는 5개씩 만들고, 페이지가 있으면 그걸 쓰고 없으면 0
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
+
+        //메인 상단 header에 검색부분에서 검색어가 없으면 아무것도 안띄우고 밑으로 내려감
         if(itemSearchDto.getSearchQuery() == null){
             itemSearchDto.setSearchQuery("");
         }
 
-        Page<MainItemDto> items = itemService.getMainItemPage(itemSearchDto, pageable);
+
+        Page <MainItemDto> items = itemService.getMainItemPage(itemSearchDto, pageable);
 
         model.addAttribute("items", items);
         model.addAttribute("itemSearchDto", itemSearchDto);
