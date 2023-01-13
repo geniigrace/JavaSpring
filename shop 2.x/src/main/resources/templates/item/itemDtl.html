@@ -27,28 +27,38 @@
         }
 
         function order(){
+            //csrf 방어를 위한 토큰 및 헤더 선언
             var token = $("meta[name='_csrf']").attr("content");
             var header = $("meta[name='_csrf_header']").attr("content");
 
+            //url 문자열을 변수에 저장
             var url = "/order";
+
+            //상품Id와 주문수량을 키:값 형태로 변수에 저장
             var paramData = {
                 itemId : $("#itemId").val(),
                 count : $("#count").val()
             }
 
+            //JSON 형식으로 변환
             var param = JSON.stringify(paramData);
 
+            //ajax 비동기 통신; 화면 전환 없이 데이터는 추가할 수 있음 (예:댓글);
             $.ajax({
                 url : url,
                 type : "POST",
-                contentType : "application/json",
-                data : param,
-                beforeSend : function(xhr){
+                contentType : "application/json", /*컨트롤러에 json 형태로 송신*/
+                data : param, /*상품Id와 주문수량*/
+
+                beforeSend : function(xhr){ /*전처리 과정*/
                     /*데이터 전송 전에 헤더의 csrf 값을 설정 */
                     xhr.setRequestHeader(header, token);
                 },
                 dataType : "json",
                 cache : false,
+
+                /* 이후 단계는 컨트롤러 및 서버까지 다녀옴 */
+
                 success : function(result, status){
                     alert("주문이 완료되었습니다.");
                     location.href='/';
