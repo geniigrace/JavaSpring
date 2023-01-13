@@ -42,7 +42,7 @@ public class ItemController {
                           Model model,
                           @RequestParam("itemImgFile") List<MultipartFile> itemImgFileList){
         if(bindingResult.hasErrors()){
-            return "/item/itemForm";
+            return "item/itemForm";
         }
 
         //get(0)이 비워져있고 id도 null 이면 첫번째 상품이미지가 등록되지 않은 상황임
