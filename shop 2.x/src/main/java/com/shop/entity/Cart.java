@@ -22,4 +22,10 @@ public class Cart {
     @JoinColumn(name="member_id") //맵핑 할 외래키를 지정 //외래키 이름을 지정하지 않으면 JPA가 알아서 지정하지만 원하는 이름이 아닐수도 있다.
     private Member member; //연결할 엔티티 명을 씀
 
+    //장바구니 추가를 위한 내용
+    public static Cart createCart(Member member){
+        Cart cart = new Cart();
+        cart.setMember(member);
+        return cart;
+    }
 }

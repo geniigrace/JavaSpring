@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "cart_item")
-public class CartItem {
+public class CartItem extends BaseEntity{
 
     @Id
     @GeneratedValue
@@ -27,5 +27,19 @@ public class CartItem {
     private Item item;
 
     private int count;
+
+    //장바구니 추가를 위한 내용
+    public static CartItem createCartItem(Cart cart, Item item, int count){
+        CartItem cartItem = new CartItem();
+        cartItem.setCart(cart);
+        cartItem.setItem(item);
+        cartItem.setCount(count);
+        return cartItem;
+    }
+
+    public void addCount(int count) {
+        this.count += count;
+
+    }
 
 }
