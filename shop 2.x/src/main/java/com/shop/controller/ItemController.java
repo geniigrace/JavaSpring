@@ -81,6 +81,7 @@ public class ItemController {
         return "item/itemForm";
     }
 
+    //수정
     @PostMapping(value = "/admin/item/{itemID}")
     public String itemUpdate(@Valid ItemFormDto itemFormDto,
                              BindingResult bindingResult,
