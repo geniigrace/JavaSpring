@@ -46,7 +46,112 @@
             }
             getOrderTotalPrice();
         }
-    </script>
+
+        function updateCartItemCount(cartItemId, count){
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            var url = "/cartItem/" + cartItemId + "?count=" + count;
+
+            $.ajax({
+                url : url,
+                type : "PATCH",
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType : "json",
+                cache : false,
+                success : function(result, status){
+                    console.log("cartItem count update success");
+                },
+                error : function(jqXHR, status, error){
+                    if(jqXHR.status == '401'){
+                        alert('로그인 후 이용해주세요.');
+                        location.href='/members/login';
+                    }
+                    else{
+                        alert(jqXHR.responseText);
+                    }
+                }
+            });
+        }
+
+        function deleteCartItem(obj){
+            var cartItemId = obj.dataset.id;
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            var url = "/cartItem/" + cartItemId;
+
+            $.ajax({
+                url : url,
+                type : "DELETE",
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType : "json",
+                cache : false,
+                success : function(result, status){
+                    location.href='/cart';
+                },
+                error : function(jqXHR, status, error){
+                    if(jqXHR.status == '401'){
+                        alert('로그인 후 이용해주세요.');
+                        location.href='/members/login';
+                    }
+                    else{
+                        alert(jqXHR.responseText);
+                    }
+                }
+            });
+        }
+
+        function orders(){
+
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            var url = "/cart/orders";
+
+            var dataList = new Array();
+            var paramData = new Object();
+
+            $("input[name=cartChkBox]:checked").each(function(){
+                var cartItemId = $(this).val(); //value=${cartItem.cartItemId} 가 있어서 this 로 받아옴
+                var data = new Object();
+                data["cartItemId"] = cartItemId;
+                dataList.push(data); //dataList 생성
+
+            paramData['cartOrderDtoList'] = dataList;
+
+            var param = JSON.stringify(paramData);
+
+            $.ajax({
+                url : url,
+                type : "POST",
+                contentType : "application/json",
+                data : param,
+                 beforeSend : function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType : "json",
+                cache : false,
+                success : function(result, status){
+                    alert("주문이 완료 되었습니다.");
+                    location.href='/orders';
+                },
+                error : function(jqXHR, status, error){
+                    if(jqXHR.status == '401'){
+                        alert('로그인 후 이용해주세요.');
+                        location.href='/members/login';
+                    }
+                    else{
+                        alert(jqXHR.responseText);
+                    }
+                }
+            });
+        }
+  </script>
 </th:block>
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
@@ -57,9 +162,6 @@
             margin-top:2%;
             margin-bottom:100px;
         }
-
-        .table{width:100%;}
-
         .repImgDiv{
             margin-right:15px;
             margin-left:15px;
@@ -89,9 +191,9 @@
   <div>
     <table class="table">
       <colgroup>
-        <col width="20%">
-        <col width="65%">
-        <col width="15%">
+        <col width="18%">
+        <col width="70%">
+        <col width="12%">
       </colgroup>
       <thead>
       <tr class="text-center">
@@ -114,20 +216,19 @@
           <div class="align-self-center">
             <span th:text="${cartItem.itemNm}" class="f24 font-weight-bold"></span>
             <div class="fs18 font-weight-light">
-               <span class="input-group mt-2">
-                 <span th:id="'price_' + ${cartItem.cartItemId}" th:data-price="${cartItem.price}" th:text="${cartItem.price} + '원'" class="align-self-center mr-2">
-                 </span>
-                 <input type="number" name="count" size=20 th:id="'count_' + ${cartItem.cartItemId}" th:value="${cartItem.count}" min="1" onchange="changeCount(this)">
-                 <button type="button" class="close" aria-label="Close">
-                 <span aria-hidden="true" th:data-id="${cartItem.cartItemId}" onclick="deleteCartItem(this)">&times;</span>
-                 </button>
-               </span>
+                                <span class="input-group mt-2">
+                                    <span th:id="'price_' + ${cartItem.cartItemId}" th:data-price="${cartItem.price}" th:text="${cartItem.price} + '원'" class="align-self-center mr-2">
+                                    </span>
+                                    <input type="number" name="count" th:id="'count_' + ${cartItem.cartItemId}" th:value="${cartItem.count}" min="1" onchange="changeCount(this)">
+                                    <button type="button" class="close" aria-label="Close">
+                                        <span aria-hidden="true" th:data-id="${cartItem.cartItemId}" onclick="deleteCartItem(this)">&times;</span>
+                                    </button>
+                                </span>
             </div>
           </div>
         </td>
         <td class="text-center align-middle">
-                    <span th:id="'totalPrice_'+${cartItem.cartItemId}" name="totalPrice"
-                          th:text="${cartItem.price * cartItem.count} + '원'"></span>
+                    <span th:id="'totalPrice_'+${cartItem.cartItemId}" name="totalPrice" th:text="${cartItem.price * cartItem.count} + '원'"></span>
         </td>
       </tr>
       </tbody>

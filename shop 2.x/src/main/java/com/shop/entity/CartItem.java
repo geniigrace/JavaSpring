@@ -42,4 +42,9 @@ public class CartItem extends BaseEntity{
 
     }
 
+    //장바구니 수량 변경시 수량 저장을 위한 추가
+    public void updateCount(int count){
+        this.count=count;
+    }
+
 }

@@ -2,6 +2,8 @@ package com.shop.service;
 
 import com.shop.dto.CartDetailDto;
 import com.shop.dto.CartItemDto;
+import com.shop.dto.CartOrderDto;
+import com.shop.dto.OrderDto;
 import com.shop.entity.Cart;
 import com.shop.entity.CartItem;
 import com.shop.entity.Item;
@@ -13,6 +15,7 @@ import com.shop.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.util.StringUtils;
 
 import javax.persistence.EntityExistsException;
 import java.util.ArrayList;
@@ -31,6 +34,9 @@ public class CartService {
     private final CartRepository cartRepository;
 
     private final CartItemRepository cartItemRepository;
+
+    //장바구니에서 주문하기를 위한 추가
+    private final OrderService orderService;
 
     public Long addCart(CartItemDto cartItemDto, String email) {
         Item item = itemRepository.findById(cartItemDto.getItemId()).orElseThrow(EntityExistsException::new);
@@ -72,5 +78,54 @@ public class CartService {
         return cartDetailDtoList;
 
     }
+
+    @Transactional(readOnly = true)
+    public boolean validateCartItem(Long cartItemId, String email){
+
+        Member curMember = memberRepository.findByEmail(email);
+
+        CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(EntityExistsException::new);
+        Member savedMember = cartItem.getCart().getMember();
+
+        if(!StringUtils.equals(curMember.getEmail(), savedMember.getEmail())){
+            return false;
+        }
+
+        return true;
+    }
+
+    public void updateCartItemCount(Long cartItemId, int count){
+        CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(EntityExistsException::new);
+        cartItem.updateCount(count);
+    }
+
+    public void deleteCartItem(Long cartItemId){
+        CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(EntityExistsException::new);
+        cartItemRepository.delete(cartItem);
+
+    }
+
+    //장바구니에서 주문하기를 위한 추가
+    public Long orderCartItem(List<CartOrderDto> cartOrderDtoList, String email){
+
+        List<OrderDto> orderDtoList = new ArrayList<>();
+
+        for(CartOrderDto cartOrderDto : cartOrderDtoList) {
+            CartItem cartItem = cartItemRepository.findById(cartOrderDto.getCartItemId()).orElseThrow(EntityExistsException::new);
+            OrderDto orderDto = new OrderDto();
+            orderDto.setItemId(cartItem.getItem().getId());
+            orderDto.setCount(cartItem.getCount());
+            orderDtoList.add(orderDto);
+        }
+        Long orderId = orderService.orders(orderDtoList, email);
+
+        //주문 완료 한건 삭제하기
+        for(CartOrderDto cartOrderDto : cartOrderDtoList){
+            CartItem cartItem = cartItemRepository.findById(cartOrderDto.getCartItemId()).orElseThrow(EntityExistsException::new);
+            cartItemRepository.delete(cartItem);
+        }
+        return orderId;
+    }
+
 
 }
