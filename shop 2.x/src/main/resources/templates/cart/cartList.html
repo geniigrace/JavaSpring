@@ -23,7 +23,7 @@
                 var count = $("#count_" + cartItemId).val();
                 orderTotalPrice += price * count;
             });
-
+                orderTotalPrice = orderTotalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
             $("#orderTotalPrice").html(orderTotalPrice+'원');
         }
 
@@ -218,7 +218,7 @@
             <div class="fs18 font-weight-light">
                                 <span class="input-group mt-2">
                                     <span th:id="'price_' + ${cartItem.cartItemId}" th:data-price="${cartItem.price}"
-                                          th:text="${cartItem.price} + '원'" class="align-self-center mr-2">
+                                          th:text="${#numbers.formatInteger(cartItem.price,0,'COMMA')} + '원'" class="align-self-center mr-2">
                                     </span>
                                     <input type="number" name="count" th:id="'count_' + ${cartItem.cartItemId}"
                                            th:value="${cartItem.count}" min="1" onchange="changeCount(this)">
@@ -232,7 +232,7 @@
         </td>
         <td class="text-center align-middle">
                     <span th:id="'totalPrice_'+${cartItem.cartItemId}" name="totalPrice"
-                          th:text="${cartItem.price * cartItem.count} + '원'"></span>
+                          th:text="${#numbers.formatInteger(cartItem.price * cartItem.count, 0, 'COMMA')} + '원'"></span>
         </td>
       </tr>
       </tbody>
